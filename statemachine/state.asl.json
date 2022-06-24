@@ -1,0 +1,40 @@
+{
+    "Comment": "State Machine",
+    "StartAt": "InputLambda",
+    "States": {
+        "InputLambda":{
+            "Type": "Task",
+            "Resource": "${InputLambdaArn}",
+            "Next": "Decision"
+        },
+        "Decision":{
+            "Type": "Choice",
+            "Choices": [{
+                "Variable": "$.numeroUno",
+                "NumericEquals": 20,
+                "Next": "Addition"
+            },
+            {
+                "Variable": "$.numeroDos",
+                "NumericGreaterThan": 20,
+                "Next": "Multiplication"
+            }
+        ]
+        },
+        "Addition":{
+            "Type": "Task",
+            "Resource": "${AdditionLambdaArn}",
+            "Next": "EndSM"
+        },
+        "Multiplication":{
+            "Type": "Task",
+            "Resource": "${MultiplicationLambdaArn}",
+            "Next": "EndSM"
+        },
+        "EndSM":{
+            "Type": "Pass",
+            "End": true
+        }
+        
+    }
+}

@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+
+Resources:
+  InputLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/input-lambda
+      Handler: inputLambda.lambdaHandler
+      Runtime: nodejs12.x
+  
+  AdditionLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/addition
+      Handler: additionLambda.lambdaHandler
+      Runtime: nodejs12.x
+  
+  MultiplicationLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/multiplication
+      Handler: multiplicationLambda.lambdaHandler
+      Runtime: nodejs12.x
+
+  
+  StateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: statemachine/state.asl.json
+      Name: !Sub StateMachine-Example
+      Type: STANDARD
+      DefinitionSubstitutions:
+        InputLambdaArn: !GetAtt InputLambda.Arn
+        AdditionLambdaArn: !GetAtt AdditionLambda.Arn
+        MultiplicationLambdaArn: !GetAtt MultiplicationLambda.Arn
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref InputLambda
+        - LambdaInvokePolicy:
+            FunctionName: !Ref AdditionLambda
+        - LambdaInvokePolicy:
+            FunctionName: !Ref MultiplicationLambda
+        - CloudWatchLogsFullAccess

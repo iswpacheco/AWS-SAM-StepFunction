@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  InputLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://sam-examples/970f0aa453b0ba7c4b80d0c6969d8272
+      Handler: inputLambda.lambdaHandler
+      Runtime: nodejs12.x
+    Metadata:
+      SamResourceId: InputLambda
+  AdditionLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://sam-examples/14bd2fcacb2220771b39c8933c9fdc5f
+      Handler: additionLambda.lambdaHandler
+      Runtime: nodejs12.x
+    Metadata:
+      SamResourceId: AdditionLambda
+  MultiplicationLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://sam-examples/a4b17c6f0219c9702f870feb5dca3802
+      Handler: multiplicationLambda.lambdaHandler
+      Runtime: nodejs12.x
+    Metadata:
+      SamResourceId: MultiplicationLambda
+  StateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri:
+        Bucket: sam-examples
+        Key: f1d5e3692fea99b147e3cfd54e6f9956
+      Name:
+        Fn::Sub: StateMachine-Example
+      Type: STANDARD
+      DefinitionSubstitutions:
+        InputLambdaArn:
+          Fn::GetAtt:
+          - InputLambda
+          - Arn
+        AdditionLambdaArn:
+          Fn::GetAtt:
+          - AdditionLambda
+          - Arn
+        MultiplicationLambdaArn:
+          Fn::GetAtt:
+          - MultiplicationLambda
+          - Arn
+      Policies:
+      - LambdaInvokePolicy:
+          FunctionName:
+            Ref: InputLambda
+      - LambdaInvokePolicy:
+          FunctionName:
+            Ref: AdditionLambda
+      - LambdaInvokePolicy:
+          FunctionName:
+            Ref: MultiplicationLambda
+      - CloudWatchLogsFullAccess
+    Metadata:
+      SamResourceId: StateMachine

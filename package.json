@@ -1,0 +1,13 @@
+{
+  "name": "stepfunctionsam",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "sam build --template-file template.yaml && sam package --template-file ./.aws-sam/build/template.yaml --s3-bucket sam-examples --output-template-file packaged-dev.yaml && sam deploy --template-file packaged-dev.yaml --stack-name sam-example-ST --capabilities CAPABILITY_IAM "
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
